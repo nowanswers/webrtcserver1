@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="description" content="WebRTC reference app">
+    <meta name="mobile-web-app-capable" content="yes">
+  <meta id="theme-color" name="theme-color" content="#ffffff">
+
+  <base target="_blank">
+
+  <title>AppRTC</title>
+<!--
+  <link rel="manifest" href="manifest.json">
+  
+-->  
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css" />
+
+</head>
+
+<body>
+
+  <div id="videos-container">
+    <video id="remote-video" class="mini-video" autoplay></video>    
+    <video id="local-video" autoplay muted="muted"></video>
+  </div>
+  <div id="session-time" ></div>
+  <!-- 
+  <div id="chat-box-div">
+    <textarea id="chat-box-msg"></textarea>
+      <input type="text" ></input>
+  </div>  
+  -->
+  <div id="confirm-join-div" >
+    <div id="confirm-join-hint">Ready to start session<span id="confirm-join-room-span"></span>?</div>
+    <button id="confirm-ready-button" >READY</button>
+  </div>
+
+           <div id="new-chat-box" class="col-sm-6 col-md-5 col-lg-4 hidden" >
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-comment"></span> Chat
+                        <div class="pull-right">
+                            <div id="btn-chat-close" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </div>
+                            <div id='btn-speech-reco' class="btn btn-default btn-xs" title="Toggle Speech Recognition(Chrome only)">
+                                <span class="glyphicon glyphicon-menu-down"></span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="panel-body" id="chat-body">
+                        <ul class="chat" id="chat-area">
+
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input id="chat-msg-input" type="text" class="form-control input-sm" placeholder="Type your message here...">
+                            <div class="input-group-btn">
+                                <div class="btn btn-warning btn-sm" id="btn-chat">
+                                    Send
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+ 
+  <div id="icons" class="hidden">
+
+    <svg id="mute-audio" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+    <title>title</title>
+      <circle cx="24" cy="24" r="34">
+        <title>Mute audio</title>
+      </circle>
+      <path class="on" transform="scale(0.6), translate(17,18)" d="M38 22h-3.4c0 1.49-.31 2.87-.87 4.1l2.46 2.46C37.33 26.61 38 24.38 38 22zm-8.03.33c0-.11.03-.22.03-.33V10c0-3.32-2.69-6-6-6s-6 2.68-6 6v.37l11.97 11.96zM8.55 6L6 8.55l12.02 12.02v1.44c0 3.31 2.67 6 5.98 6 .45 0 .88-.06 1.3-.15l3.32 3.32c-1.43.66-3 1.03-4.62 1.03-5.52 0-10.6-4.2-10.6-10.2H10c0 6.83 5.44 12.47 12 13.44V42h4v-6.56c1.81-.27 3.53-.9 5.08-1.81L39.45 42 42 39.46 8.55 6z" fill="white"/>
+      <path class="off" transform="scale(0.6), translate(17,18)"  d="M24 28c3.31 0 5.98-2.69 5.98-6L30 10c0-3.32-2.68-6-6-6-3.31 0-6 2.68-6 6v12c0 3.31 2.69 6 6 6zm10.6-6c0 6-5.07 10.2-10.6 10.2-5.52 0-10.6-4.2-10.6-10.2H10c0 6.83 5.44 12.47 12 13.44V42h4v-6.56c6.56-.97 12-6.61 12-13.44h-3.4z"  fill="white"/>
+    </svg>
+
+    <svg id="mute-video" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+      <circle cx="24" cy="24" r="34">
+        <title>Mute video</title>
+      </circle>
+      <path class="on" transform="scale(0.6), translate(17,16)" d="M40 8H15.64l8 8H28v4.36l1.13 1.13L36 16v12.36l7.97 7.97L44 36V12c0-2.21-1.79-4-4-4zM4.55 2L2 4.55l4.01 4.01C4.81 9.24 4 10.52 4 12v24c0 2.21 1.79 4 4 4h29.45l4 4L44 41.46 4.55 2zM12 16h1.45L28 30.55V32H12V16z" fill="white"/>
+      <path class="off" transform="scale(0.6), translate(17,16)" d="M40 8H8c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zm-4 24l-8-6.4V32H12V16h16v6.4l8-6.4v16z" fill="white"/>
+    </svg>
+
+    <svg id="fullscreen" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+      <circle cx="24" cy="24" r="34">
+        <title>Enter fullscreen</title>
+      </circle>
+      <path class="on" transform="scale(0.8), translate(7,6)" d="M10 32h6v6h4V28H10v4zm6-16h-6v4h10V10h-4v6zm12 22h4v-6h6v-4H28v10zm4-22v-6h-4v10h10v-4h-6z" fill="white"/>
+      <path class="off" transform="scale(0.8), translate(7,6)"  d="M14 28h-4v10h10v-4h-6v-6zm-4-8h4v-6h6v-4H10v10zm24 14h-6v4h10V28h-4v6zm-6-24v4h6v6h4V10H28z" fill="white"/>
+    </svg>
+
+    <svg id="hangup" class="hidden" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+      <circle cx="24" cy="24" r="34">
+        <title>Hangup</title>
+      </circle>
+      <path transform="scale(0.7), translate(11,10)" d="M24 18c-3.21 0-6.3.5-9.2 1.44v6.21c0 .79-.46 1.47-1.12 1.8-1.95.98-3.74 2.23-5.33 3.7-.36.35-.85.57-1.4.57-.55 0-1.05-.22-1.41-.59L.59 26.18c-.37-.37-.59-.87-.59-1.42 0-.55.22-1.05.59-1.42C6.68 17.55 14.93 14 24 14s17.32 3.55 23.41 9.34c.37.36.59.87.59 1.42 0 .55-.22 1.05-.59 1.41l-4.95 4.95c-.36.36-.86.59-1.41.59-.54 0-1.04-.22-1.4-.57-1.59-1.47-3.38-2.72-5.33-3.7-.66-.33-1.12-1.01-1.12-1.8v-6.21C30.3 18.5 27.21 18 24 18z" fill="white"/>
+    </svg>
+    <svg id="chatscreen" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+      <circle cx="24" cy="24" r="34">
+        <title>Enter chat screen</title>
+      </circle>   
+      <g id="layer1" inkscape:label="Layer 1" inkscape:groupmode="layer">        
+        <path style="overflow: visible; marker: none; color: rgb(0, 0, 0); fill: url(#linearGradient29429) rgb(0, 0, 0); fill-opacity: 1; fill-rule: nonzero; stroke: rgb(120, 120, 120); stroke-width: 1; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1; visibility: visible; display: block;" d="M 18.401556,6.5708568 C 17.330237,6.5708568 16.480907,7.4342708 16.480907,8.4844229 L 16.480907,23.546039 C 16.480907,24.596191 17.330237,25.428741 18.401556,25.428741 L 32.538786,25.428741 C 33.395105,26.532444 35.061504,28.321947 39.056397,29.811425 C 37.277778,27.762498 37.281568,26.371064 37.482095,25.428741 L 40.378811,25.428741 C 41.450128,25.428741 42.330943,24.596191 42.330945,23.546039 L 42.330945,8.4844229 C 42.330945,7.4342710 41.450128,6.5708568 40.378811,6.5708568 L 18.401556,6.5708568 z " id="rect29408"/>
+        <path id="path29445" d="M 18.813100,7.5755336 C 17.894941,7.5755336 17.520588,8.0124648 17.520588,8.9124830 L 17.520588,22.780475 C 17.520588,23.680493 18.248494,24.394018 19.166653,24.394018 L 33.050535,24.394018 C 33.784431,25.339932 34.353965,26.368524 36.565549,27.493537 C 36.152377,26.596163 36.500603,25.342181 36.782053,24.394018 L 40.274795,24.394018 C 41.192952,24.394018 41.291243,24.034046 41.291245,23.134028 L 41.291245,8.9124830 C 41.291245,8.0124650 41.041429,7.6260413 40.123272,7.6260413 L 18.813100,7.5755336 z " style="overflow: visible; marker: none; color: rgb(0, 0, 0); fill: none; fill-opacity: 1; fill-rule: nonzero; stroke: rgb(255, 255, 255); stroke-width: 0.999999; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1; visibility: visible; display: block;" sodipodi:nodetypes="cccccccccccc"/>
+        <path transform="matrix(1.37281, 0, 0, 1.09241, -21.0874, 6.73562)" d="M 41.012194 27.645426 A 11.515739 3.9901025 0 1 1  17.980715,27.645426 A 11.515739 3.9901025 0 1 1  41.012194 27.645426 z" sodipodi:ry="3.9901025" sodipodi:rx="11.515739" sodipodi:cy="27.645426" sodipodi:cx="29.496454" id="path29453" style="overflow: visible; marker: none; opacity: 0.120253; color: rgb(0, 0, 0); fill: url(#radialGradient29455) rgb(0, 0, 0); fill-opacity: 1; fill-rule: nonzero; stroke: none; stroke-width: 1; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1; visibility: visible; display: block;" sodipodi:type="arc"/>
+        <path id="path29441" d="M 29.775522,15.464360 C 30.814596,15.464360 31.638363,16.334970 31.638363,17.393874 L 31.638363,32.581013 C 31.638363,33.639917 30.814596,34.479406 29.775522,34.479406 L 16.063794,34.479406 C 15.233249,35.592307 13.617005,37.396724 9.7423514,38.898615 C 11.467436,36.832612 11.463760,35.429582 11.269269,34.479406 L 8.4597394,34.479406 C 7.4206669,34.479406 6.5663627,33.639917 6.5663607,32.581013 L 6.5663607,17.393874 C 6.5663607,16.334970 7.4206669,15.464360 8.4597394,15.464360 L 29.775522,15.464360 z " style="overflow: visible; marker: none; color: rgb(0, 0, 0); fill: url(#linearGradient29443) rgb(0, 0, 0); fill-opacity: 1; fill-rule: nonzero; stroke: rgb(120, 120, 120); stroke-width: 0.999999; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1; visibility: visible; display: block;"/>
+        <path style="overflow: visible; marker: none; color: rgb(0, 0, 0); fill: none; fill-opacity: 1; fill-rule: nonzero; stroke: rgb(255, 255, 255); stroke-width: 1; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-dashoffset: 0pt; stroke-opacity: 1; visibility: visible; display: block;" d="M 29.389156,16.452895 C 30.331609,16.452895 30.624208,16.914249 30.624208,17.874689 L 30.624208,32.078936 C 30.624208,33.039376 30.382116,33.447250 29.439663,33.447250 L 15.538226,33.447250 C 14.784911,34.456666 13.470480,36.042788 12.026931,36.697916 C 12.429930,35.531131 12.275072,34.561610 12.199682,33.447250 L 8.7927724,33.447250 C 7.8503201,33.447250 7.5805314,33.039376 7.5805296,32.078936 L 7.5805296,18.000958 C 7.5805296,17.040518 7.8503201,16.452895 8.7927724,16.452895 L 29.389156,16.452895 z " id="path29449" sodipodi:nodetypes="cccccccccccc"/>
+    </svg>    
+  </div>
+      <script type="text/javascript">
+
+        var roomid = '{{roomid}}';
+      </script>
+      <script src="/js/debug.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="/js/simplewebrtc.bundle.js"></script>
+      <script>
+        // Keep this in sync with the HTML element id attributes. Keep it sorted.
+        /** CSS style selector */
+        var UI_CONSTANTS = {
+          confirmReadyButton: '#confirm-ready-button',
+          confirmJoinDiv: '#confirm-join-div',
+          confirmJoinHint: '#confirm-join-hint',
+          confirmJoinRoomSpan: '#confirm-join-room-span',
+          fullscreenSvg: '#fullscreen',
+          hangupSvg: '#hangup',
+          icons: '#icons',
+          infoDiv: '#info-div',
+          localVideo: '#local-video',
+          miniVideo: '#mini-video',
+          muteAudioSvg: '#mute-audio',
+          muteVideoSvg: '#mute-video',
+//            newRoomButton: '#new-room-button',
+//            newRoomLink: '#new-room-link',
+          remoteVideo: '#remote-video',
+          rejoinButton: '#rejoin-button',
+          rejoinDiv: '#rejoin-div',
+          rejoinLink: '#rejoin-link',
+//            roomLinkHref: '#room-link-href',
+//            roomSelectionDiv: '#room-selection',
+//            roomSelectionInput: '#room-id-input',
+//            roomSelectionInputLabel: '#room-id-input-label',
+//            roomSelectionJoinButton: '#join-button',
+//            roomSelectionRandomButton: '#random-button',
+//            roomSelectionRecentList: '#recent-rooms-list',
+          sharingDiv: '#sharing-div',
+          statusDiv: '#status-div',
+          videosDiv: '#videos',
+          chatboxDiv: '#chat-box-div',
+          msgTextArea: '#chat-box-msg',
+          chatInput: '#chat-msg-input',
+          msgSendBtn: '#btn-chat',
+          newchatDiv: '#new-chat-box',
+          chatscreenSvg:'#chatscreen',
+
+          chatBoxUl : "#chat-area",
+          chatBodyDiv : "#chat-body",
+
+          speechRecoBtn : '#btn-speech-reco',
+          closeChatBtn : '#btn-chat-close'
+        };
+      </script>            
+      <script src="/js/chatbox.js"></script>
+      <script src="/js/room.js"></script>
+      <script type="text/javascript">
+        var videoCtrl = new VideoRoomCtrl({'roomid': '{{roomid}}', 'logger' : window._log });
+      </script>
+
+  </body>
+</html>
