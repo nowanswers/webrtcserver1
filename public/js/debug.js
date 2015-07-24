@@ -100,9 +100,7 @@ function _srvLog(args, logtype) {
         if( typeof args[i] === "object" ) {
             if( 'NavigatorUserMediaError' == args[i].constructor.name ) {
                 if ( args[i].name && args[i].name === "PermissionDeniedError" ) {
-                    userMsg += "\n Your Camera is disabled. Please allow it when asked.  \
-                    \n If you are using Chrome on a phone, go to [Settings - Site settings - Camera or microphone] to turn it on. \
-                    \n If you are on a Desktop, click the camera icon in your address bar and allow gansr.com to access it."
+                    userMsg += "\n Your Camera is disabled.";                    
                 }
                 else {
                     userMsg += "\n" + args[i];

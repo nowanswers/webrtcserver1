@@ -22,7 +22,7 @@
   
 -->  
 
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
 
 </head>
@@ -41,8 +41,10 @@
   </div>  
   -->
   <div id="confirm-join-div" >
-    <div id="confirm-join-hint">Ready to start session<span id="confirm-join-room-span"></span>?</div>
-    <button id="confirm-ready-button" >READY</button>
+    <div id="confirm-join-hint">Initializing session for you...<span id="confirm-init-done-span" class="hidden"> DONE! </span>
+    <br />Please allow camera access
+    </div>
+    <button id="confirm-ready-button" class="hidden">READY</button>
   </div>
 
            <div id="new-chat-box" class="col-sm-6 col-md-5 col-lg-4 hidden" >
@@ -126,7 +128,7 @@
         var roomid = '{{roomid}}';
       </script>
       <script src="/js/debug.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="/js/jquery.min.js"></script>
       <script src="/js/simplewebrtc.bundle.js"></script>
       <script>
         // Keep this in sync with the HTML element id attributes. Keep it sorted.
@@ -179,6 +181,10 @@
       <script type="text/javascript">
         var videoCtrl = new VideoRoomCtrl({'roomid': '{{roomid}}', 'logger' : window._log });
       </script>
-
+      <script>
+        $(document).ready(function(){
+          $('#confirm-init-done-span').removeClass("hidden") ;
+        });
+      </script>
   </body>
 </html>

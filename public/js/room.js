@@ -122,12 +122,18 @@ var VideoRoomCtrl = function(loadingParams) {
     this.confirmReadyButton_.click( function(e) {
         if( this.readyToCall && this.room ) {
             this.logger(' create/join room cb ', arguments);
-            this.webrtc.joinRoom(this.room);  
-
-            //this.hide_( this.confirmReadyDiv_ ); //.addClass('hidden');
-            //this.toggleClass_( this.confirmReadyDiv_, 'hidden', true);
-            this.confirmJoinHint_.text("Waiting for remote");
-            this.toggleClass_(this.confirmReadyButton_, 'hidden', true);
+            this.webrtc.joinRoom(this.room, function(err, rommDes){
+              if( err)  {
+                this.logger.error('Session room is full or invalid!');
+                this.confirmJoinHint_.text("Session room is full or invalid!");
+              }
+              else {
+                //this.hide_( this.confirmReadyDiv_ ); //.addClass('hidden');
+                //this.toggleClass_( this.confirmReadyDiv_, 'hidden', true);
+                this.confirmJoinHint_.text("Waiting for remote");
+                this.toggleClass_(this.confirmReadyButton_, 'hidden', true);                
+              }
+            }.bind(this));  
         }
     }.bind(this));
 
@@ -174,6 +180,8 @@ var VideoRoomCtrl = function(loadingParams) {
     this.readyToCall = false;
     this.webrtc.on('readyToCall', function () {
         this.readyToCall = true;
+        this.confirmJoinHint_.text("Ready to start session");
+        this.toggleClass_( this.confirmReadyButton_, 'hidden', false);
         window.onmousemove = this.showIcons_.bind(this);
     }.bind(this));
 
@@ -237,14 +245,15 @@ var VideoRoomCtrl = function(loadingParams) {
     this.webrtc.on('connectivityError', function (peer) {
         // remote ice failure
         this.logger.error("Remote ICE failed.");
-        this.confirmJoinHint_.text("Failed to connect peer due to network failure. Please try again.");
+        this.confirmJoinHint_.text("Unable to connect to peer due to network failure. Please try again.");
         this.toggleClass_(this.confirmReadyButton_, 'hidden', true);
     }.bind(this));
 
     this.webrtc.on('localMediaError', function (err) {        
-        this.logger.error(err); 
-        //this.confirmJoinHint_.text("You Camera/Mic is not working.\n Please try again.");
-        window.location.replace("/error/camera");
+        this.logger.error(err);
+        this.confirmJoinHint_.text("You Camera/Mic is blocked.\n \
+        Please remove gansr.com from the blocking list and try again.");
+        //window.location.replace("/error/camera");
         //this.toggleClass_(this.confirmReadyButton_, 'hidden', true);
     }.bind(this));
 

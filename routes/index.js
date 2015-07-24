@@ -12,7 +12,13 @@ router.get('/error/camera', function(req, res, next) {
   res.render('errorcamera', { title: 'Express', roomid: req.params.roomid });
 });
 
+router.get('/test', function(req, res) {
+  res.render('test', { title: 'Test'});
+});
+
 router.get('/logs', function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
     var db = req.db;
     var collection = db.get('loghistory');
     collection.find({},{},function(e,docs){

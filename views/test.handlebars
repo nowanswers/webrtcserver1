@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="description" content="WebRTC reference app">
+    <meta name="mobile-web-app-capable" content="yes">
+  <meta id="theme-color" name="theme-color" content="#ffffff">
+
+  <base target="_blank">
+
+  <title>Test</title>
+
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+</head>
+
+<body>
+<ul>
+<li><h1> If you see this, you can access the server </h1> </li>
+<li><h1> javascript loading...</h1> <h3 class="hidden" id='completeloading'> loading done</h3> </li>
+</ul>
+
+<script src="/js/debug.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/simplewebrtc.bundle.js"></script>
+<script src="/js/chatbox.js"></script>
+<script src="/js/room.js"></script>
+<script>
+	$(document).ready(function(){
+		$('#completeloading').removeClass("hidden");
+				
+		var videoCtrl = new VideoRoomCtrl({'roomid': '{{roomid}}', 'logger' : window._log });
+	});
+</script>
+</body>
+</html>
