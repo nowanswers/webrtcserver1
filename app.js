@@ -14,6 +14,7 @@ var exphbs  = require('express-handlebars');
 var routes = require('./routes/index');
 //var users = require('./routes/users');
 
+//console.log( signalserver.sockets.clients('testroom') );
 var app = express();
 
 // view engine setup
@@ -33,6 +34,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization');
+    
+    next();
+});
 
 //mongo db
 app.use(function(req,res,next){
@@ -40,40 +48,7 @@ app.use(function(req,res,next){
   next();
 });
 
-
+//router.get('/r/:roomid',
 app.use('/', routes);
-//app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
 
 module.exports = app;

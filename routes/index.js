@@ -1,7 +1,7 @@
 var express = require('express');
 var logger = require('morgan');
 var router = express.Router();
-
+//var signalserver = require('../signalserver/io');
 
 /* GET home page. */
 router.get('/r/:roomid', function(req, res, next) {
