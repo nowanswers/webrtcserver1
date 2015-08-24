@@ -1,13 +1,16 @@
 
 var config = require('./config');
+var crypto = require('crypto');
 
 function RoomServer(io) {
     console.log('RoomServer created with io');
     var self =this;
     var nspio = self.nspio = io.of('/webrtc');
 
-    self.nspio.on('connection', function (socket) {
-        console.log('socket connected : ' + socket.id);
+    self.nspio.on('connection', function (skt) {
+        console.log('socket connected : ' + skt.id);
+
+        var socket = skt;
 
         socket.resources = {
             screen: false,
@@ -20,15 +23,15 @@ function RoomServer(io) {
         //console.log('socket:' + socket.id + 'msging:', JSON.stringify(details));
             if (!details) return;
 
+            // socket.rooms.forEach(function(room){
+            //     socket.to(room).broadcast.emit(details);
+            // })
 
-            socket.rooms.forEach(function(room){
-                socket.to(room).broadcast(details);
-            })
-            //var othersocket = io.sockets.sockets[details.to];
-            var othersocket = self.nspio.sockets.connected[details.to];
+            var othersocket = self.nspio.connected[details.to];
             if (!othersocket) return;
         
         //console.log('to socket:' + details.to);
+            console.log('msg type:', details.type );
             details.from = socket.id;
             othersocket.emit('message', details);
         });
@@ -55,18 +58,19 @@ function RoomServer(io) {
         //RoomServer.prototype.tag = 'RoomServer';
         function describeRoom(rname) { 
             //var sockets = io.sockets.sockets(name);
-            console.log(typeof self.nspio.adapter.rooms);
             var sockets = self.nspio.adapter.rooms[rname];
             var result = {
-                sockets: {}
+                clients: {}
             };
-            if( typeof sockets === 'array' ) {
-
-                sockets.forEach(function (socket) {
-                    result.sockets[socket.id] = socket.resources;
-                });
+            
+            if( sockets ) {
+                //console.log('rooms[name]: ', sockets);
+                for(var skt in sockets) {
+                    //console.log('conn[] : ', self.nspio.connected[skt]);
+                    result.clients[skt] = self.nspio.connected[skt].resources;
+                }
             }
-            //console.log('in room: ', JSON.stringify(result));
+            //console.log('room des: ', result);
             return result;
         }
 
@@ -77,7 +81,8 @@ function RoomServer(io) {
         function removeFeed(type) {
             if (socket.room) {
             console.log('socket:'+socket.id + ' broadcasting leave room');
-                io.sockets.in(socket.room).emit('remove', {
+
+                socket.in(socket.room).emit('remove', {
                     id: socket.id,
                     type: type
                 });
@@ -90,6 +95,8 @@ function RoomServer(io) {
         };
 
         function join(name, cb) {
+            console.log('soket in join():', socket.id);
+
             // sanity check
             if (typeof name !== 'string') return;
             // check if maximum number of sockets reached
@@ -99,6 +106,7 @@ function RoomServer(io) {
                 return;
             }
             // leave any existing rooms
+            
             if( socket.room !== name ) {
                 removeFeed();   
                 safeCb(cb)(null, describeRoom(name));
@@ -144,26 +152,46 @@ function RoomServer(io) {
                 [data.type, data.session, data.prefix, data.peer, data.time, data.value]
             ));
         });
+
+        // tell client about stun and turn servers and generate nonces
+        socket.emit('stunservers', config.stunservers || []);
+
+        // create shared secret nonces for TURN authentication
+        // the process is described in draft-uberti-behave-turn-rest
+        var credentials = [];
+        config.turnservers.forEach(function (server) {
+            var hmac = crypto.createHmac('sha1', server.secret);
+            // default to 86400 seconds timeout unless specified
+            var username = Math.floor(new Date().getTime() / 1000) + (server.expiry || 86400) + "";
+            hmac.update(username);
+            credentials.push({
+                username: username,
+                credential: hmac.digest('base64'),
+                url: server.url
+            });
+        });
+        socket.emit('turnservers', credentials);        
+
     });        
 }
 
-//RoomServer.prototype.tag = 'RoomServer';
-RoomServer.prototype.describeRoom = function (rname) { 
-    //var sockets = io.sockets.sockets(name);
-    var sockets = self.nspio.adapter.rooms[rname];
-    var result = {
-        sockets: {}
-    };
-    sockets.forEach(function (socket) {
-        result.sockets[socket.id] = socket.resources;
-    });
-    //console.log('in room: ', JSON.stringify(result));
-    return result;
-}
+// //RoomServer.prototype.tag = 'RoomServer';
+// RoomServer.prototype.describeRoom = function (rname) { 
+//     //var sockets = io.sockets.sockets(name);
+//     var sockets = self.nspio.adapter.rooms[rname];
+//     var result = {
+//         sockets: {}
+//     };
+//     sockets.forEach(function (socket) {
+//         result.sockets[socket.id] = socket.resources;
+//     });
+//     //console.log('in room: ', JSON.stringify(result));
+//     return result;
+// }
 
-RoomServer.prototype.socketsInRoom = function (rname){
-    return Object.keys(self.nspio.adapter.rooms[rname]).length;
-}
+// RoomServer.prototype.socketsInRoom = function (rname){
+//     return Object.keys(self.nspio.adapter.rooms[rname]).length;
+// }
 
 
 module.exports = function (socketio) {

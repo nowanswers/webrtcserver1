@@ -3,9 +3,9 @@
     "logLevel": 3,
     "server": {
         "port": 8888,
-        "secure": false, /* whether this connects via https */
-        "key": null,
-        "cert": null,
+        "secure": true, /* whether this connects via https */
+        "key": "../../local.key",
+        "cert": "../../local.crt",
         "password": null
     },
     "rooms": {
@@ -18,7 +18,7 @@
     ],
     "turnservers" : [
         
-        { "url": "turn:104.236.11.237",
+        { "url": "turn:208.75.75.109",
           "secret": "logen",
           "expiry": 86400 }
          

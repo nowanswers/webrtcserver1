@@ -7,19 +7,19 @@
 var app = require('../app');
 var debug = require('debug')('SimpleWebRTC:server');
 var http = require('http');
-var https = require('https');
-var fs = require('fs');
+//var https = require('https');
+// var fs = require('fs');
 
-var privateKey = fs.readFileSync('../local.key', 'utf8');
-var certificate = fs.readFileSync('../local.crt', 'utf8');
+// var privateKey = fs.readFileSync('../local.key', 'utf8');
+// var certificate = fs.readFileSync('../local.crt', 'utf8');
 
-var credentials = {key: privateKey, cert: certificate};
+// var credentials = {key: privateKey, cert: certificate};
 
 
 /**
  * Get port from environment and store in Express.
  */
-
+console.log('PORT:', process.env.PORT);
 var port = normalizePort(process.env.PORT || '80');
 
 /**
@@ -27,9 +27,10 @@ var port = normalizePort(process.env.PORT || '80');
  */
 
 var server = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
+//var httpsServer = https.createServer(credentials, app);
 
-var io = require('socket.io')(httpsServer);
+//var io = require('socket.io')(httpsServer);
+var io = require('socket.io')(server);
 
 var roomserver = require('../roomserver')(io);
 //console.log('roomserver:' + roomserver.tag);
@@ -39,14 +40,6 @@ var roomapp  = require('../roomapp')(roomserver);
 
 app.use('/socket', roomapp);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
 
 // development error handler
 // will print stacktrace
@@ -62,13 +55,13 @@ app.use(function(req, res, next) {
 
 // // production error handler
 // // no stacktraces leaked to user
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.render('error', {
-//     message: err.message,
-//     error: {}
-//   });
-// });
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -78,9 +71,9 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-httpsServer.listen(443);
-httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
+// httpsServer.listen(443);
+// httpsServer.on('error', onError);
+// httpsServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.

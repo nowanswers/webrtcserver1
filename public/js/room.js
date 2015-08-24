@@ -59,6 +59,7 @@ var VideoRoomCtrl = function(loadingParams) {
     //this.logger = new Srvlogger(true);
     // create our webrtc connection
     this.webrtc = new SimpleWebRTC({
+        url: 'https://localhost/',
         // the id/element dom element that will hold "our" video
         localVideoEl: UI_CONSTANTS.localVideo, //'#local-video',
         // the id/element dom element that will hold remote videos

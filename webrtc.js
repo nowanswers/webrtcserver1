@@ -7,6 +7,15 @@ var Peer = require('./peer');
 
 
 function WebRTC(opts) {
+
+    WildEmitter.emit('WebRTCWildEmitter', {haha:'fuck'});
+    WildEmitter.on('WebRTCWildEmitter', function(payload){
+        console.log(' in webrtc WebRTCWildEmitter', payload);
+    });
+    WildEmitter.on('PeerWildEmitter', function(payload){
+        console.log('in webrtc  PeerWildEmitter', payload);
+    });
+
     var self = this;
     var options = opts || {};
     var config = this.config = {
@@ -102,6 +111,13 @@ function WebRTC(opts) {
             });
         }
     });
+
+
+    //BO+
+    var testpeer = new Peer(opts);
+    this.on('testpeermessage', function(payload){
+        console.log('in webrtc testpeermessage', payload);
+    }); 
 
     // log events in debug mode
     if (this.config.debug) {

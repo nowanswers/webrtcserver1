@@ -7,13 +7,13 @@ module.exports = function(rmsrv) {
 
 	var app = express();
 
-	app.get('/rooms', function(req,res){
+	app.get('/rooms', function(req,res) {
 		//console.log('rooms: ' + JSON.stringify(roomserver.nspio.adapter.rooms));
 		var roomsnum = Object.keys(roomserver.nspio.adapter.rooms).length ;
       	res.json({num: roomsnum, rooms: roomserver.nspio.adapter.rooms});// clients );
 	});
 
-	app.get('/room/:roomid', function(req,res){
+	app.get('/room/:roomid', function(req,res) {
 		var rooms = roomserver.nspio.adapter.rooms;
 		var roomid =req.params.roomid;
 		var peers = rooms[roomid];

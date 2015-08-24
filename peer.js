@@ -10,6 +10,11 @@ var INBAND_FILETRANSFER_V1 = 'https://simplewebrtc.com/protocol/filetransfer#inb
 
 function Peer(options) {
     var self = this;
+    
+    WildEmitter.emit('PeerWildEmitter', {haha:'fuck'});
+    WildEmitter.on('PeerWildEmitter', function(payload){
+        console.log('in peer PeerWildEmitter', payload);
+    });
 
     this.id = options.id;
     this.parent = options.parent;
@@ -88,6 +93,12 @@ function Peer(options) {
     // proxy events to parent
     this.on('*', function () {
         self.parent.emit.apply(self.parent, arguments);
+    });
+
+    //BO+
+    self.emit('testpeermessage', {haha:'fuck'});
+    self.on('testpeermessage', function(payload){
+        console.log('in peer testpeermessage', payload);
     });
 }
 

@@ -7,6 +7,14 @@ var SocketIoConnection = require('./socketioconnection');
 //var winston = require('winston');
 
 function SimpleWebRTC(opts) {
+
+    WildEmitter.on('WebRTCWildEmitter', function(payload){
+        console.log(' in simplewebrtc WebRTCWildEmitter', payload);
+    });
+    WildEmitter.on('PeerWildEmitter', function(payload){
+        console.log('in simplewebrtc  PeerWildEmitter', payload);
+    });
+
     var self = this;
     var options = opts || {};
     var config = this.config = {
@@ -66,6 +74,14 @@ function SimpleWebRTC(opts) {
 
     // call WildEmitter constructor
     WildEmitter.call(this);
+
+    this.on('WebRTCWildEmitter', function(payload){
+        console.log(' in simplewebrtc WebRTCWildEmitter', payload);
+    });
+    this.on('PeerWildEmitter', function(payload){
+        console.log('in simplewebrtc  PeerWildEmitter', payload);
+    });
+
 
     // create default SocketIoConnection if it's not passed in
     if (this.config.connection === null) {
@@ -133,10 +149,21 @@ function SimpleWebRTC(opts) {
         self[method] = self.webrtc[method].bind(self.webrtc);
     });
 
+
+
     // proxy events from WebRTC
     this.webrtc.on('*', function () {
         self.emit.apply(self, arguments);
     });
+
+    this.on('WebRTCWildEmitter', function(payload){
+        console.log(' in simplewebrtc proxywebrtc WebRTCWildEmitter', payload);
+    });
+    this.on('PeerWildEmitter', function(payload){
+        console.log('in simplewebrtc proxywebrtc PeerWildEmitter', payload);
+    });
+
+
 
     // log all events in debug mode
     if (config.debug) {
