@@ -3,7 +3,7 @@
     "logLevel": 3,
     "server": {
         "port": 8888,
-        "secure": true, /* whether this connects via https */
+        "secure":false, /* whether this connects via https */
         "key": "../../local.key",
         "cert": "../../local.crt",
         "password": null
@@ -19,7 +19,7 @@
     "turnservers" : [
         
         { "url": "turn:208.75.75.109",
-          "secret": "logen",
+          "secret": "nowansrlogen",
           "expiry": 86400 }
          
     ]

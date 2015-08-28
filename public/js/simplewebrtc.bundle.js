@@ -21,7 +21,7 @@ function SimpleWebRTC(opts) {
     var self = this;
     var options = opts || {};
     var config = this.config = {
-            url: 'http://104.236.11.237:8888/',
+            url: 'http://104.131.74.156:8000', //http://104.236.11.237:8888/',
             socketio: {/* 'force new connection':true*/},
             connection: null,
             debug: false,
@@ -762,7 +762,6 @@ function WebRTC(opts) {
         console.log('in webrtc  PeerWildEmitter', payload);
     });
 
-    newemitter.emit('WebRTCWildEmitter', {haha:'fuck'});
 
     var self = this;
     var options = opts || {};
@@ -860,12 +859,6 @@ function WebRTC(opts) {
         }
     });
 
-
-    //BO+
-    var testpeer = new Peer(opts);
-    this.on('testpeermessage', function(payload){
-        console.log('in webrtc testpeermessage', payload);
-    }); 
 
     // log events in debug mode
     if (this.config.debug) {
@@ -5443,8 +5436,6 @@ function Peer(options) {
         console.log('in peer PeerWildEmitter', payload);
     });
 
-    newemitter.emit('PeerWildEmitter', {haha:'fuck'});
-
 
     this.id = options.id;
     this.parent = options.parent;
@@ -5526,7 +5517,6 @@ function Peer(options) {
     });
 
     //BO+
-    self.emit('testpeermessage', {haha:'fuck'});
     self.on('testpeermessage', function(payload){
         console.log('in peer testpeermessage', payload);
     });

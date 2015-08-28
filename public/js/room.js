@@ -59,7 +59,7 @@ var VideoRoomCtrl = function(loadingParams) {
     //this.logger = new Srvlogger(true);
     // create our webrtc connection
     this.webrtc = new SimpleWebRTC({
-        url: 'https://localhost/',
+        url: 'http://104.131.74.156:8888',
         // the id/element dom element that will hold "our" video
         localVideoEl: UI_CONSTANTS.localVideo, //'#local-video',
         // the id/element dom element that will hold remote videos
@@ -161,8 +161,18 @@ var VideoRoomCtrl = function(loadingParams) {
 
     this.hangupSvg_.click( function() {
         //TODO hangup and leave the room
-        this.webrtc.leaveRoom();
-    }.bind(this));
+	this.webrtc.mute();
+	this.webrtc.stopLocalVideo();
+	var peers = this.webrtc.webrtc.getPeers();
+	for(var peer in peers){
+	   var streams = peers[peer].pc.getRemoteStreams();
+	   for(var stream in streams){
+	  
+	      streams[stream].stop();
+	   }
+	};
+	window.setTimeout(this.webrtc.leaveRoom.bind(this.webrtc),1000);
+    }.bind(this));  
 
     this.chatscreenSvg_.click( function() {
         this.toggleClass_(this.chatscreenSvg_, 'on');
